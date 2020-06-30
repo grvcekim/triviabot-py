@@ -91,6 +91,10 @@ def sendMsg(server, msg):
 
 
 def run(server):
+    loadQuestions()
+    server = startSocket()
+    joinChat(server)
+    chooseQuestion()
     while True:
         # parse through data received from server
         line = server.recv(2048).decode("utf-8").split("\n")
@@ -119,8 +123,4 @@ def run(server):
 
 
 if __name__ == "__main__":
-    loadQuestions()
-    server = startSocket()
-    joinChat(server)
-    chooseQuestion()
-    run(server)
+    run()

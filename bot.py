@@ -3,6 +3,7 @@ import socket
 import csv
 import random
 import sys
+from app import server
 
 questions = []
 q_num = 0
@@ -28,11 +29,12 @@ def loadQuestions():
         questions = questions[1:]
         # randomizes order of questions
         random.shuffle(questions)
+        print("Questions loaded.")
         print("Total number of questions: %d" % len(questions)) 
         # print(questions)
 
 def chooseQuestion():
-    global questions, q_num, question, answer
+    global questions, q_num, question, answer, game_over
     if q_num == len(questions):
         sendMsg("Those are all the questions we have! Thanks for playing :^)")
         game_over = True
@@ -41,7 +43,7 @@ def chooseQuestion():
     question = curr[0]
     answer = curr[1]
     q_num += 1
-    sendMsg("Question #%d: %s" % (q_num, question))
+    sendMsg("Question #%d of %d: %s" % (q_num, len(questions), question))    
 
 # pongs server back to not timeout
 def pong(line):
@@ -72,37 +74,42 @@ def sendMsg(msg):
 
 
 
-loadQuestions()
+# loadQuestions()
 
-server = socket.socket()
-server.connect((HOST, PORT))
-server.send(bytes("PASS " + PASS + "\r\n", "utf-8"))
-server.send(bytes("NICK " + NICK + "\r\n", "utf-8"))
-server.send(bytes("JOIN #" + CHANNEL + "\r\n", "utf-8"))
-joinChat()
+# server = socket.socket()
+# server.connect((HOST, PORT))
+# server.send(bytes("PASS " + PASS + "\r\n", "utf-8"))
+# server.send(bytes("NICK " + NICK + "\r\n", "utf-8"))
+# server.send(bytes("JOIN #" + CHANNEL + "\r\n", "utf-8"))
+# joinChat()
 
-chooseQuestion()
+# chooseQuestion()
 
-while True:
-    # print(server.recv(2048).decode("utf-8"))
-    line = server.recv(2048).decode("utf-8").split("\n")
-    if len(line) == 2:
-        line = line[0]
-        print(line)
-        if "PING" in line:
-            pong(line)
-            continue
-        else:
-            user = getUser(line)
-            msg = getMsg(line)
-            print(user + ": " + msg)
+# while True:
+#     # print(server.recv(2048).decode("utf-8"))
+#     line = server.recv(2048).decode("utf-8").split("\n")
+#     if len(line) == 2:
+#         line = line[0]
+#         # print(line)
+#         if "PING" in line:
+#             pong(line)
+#             continue
+#         else:
+#             user = getUser(line)
+#             msg = getMsg(line)
+#             print(user + ": " + msg)
 
-    if checkAnswer(msg):
-        sendMsg(user + " guessed the correct answer: " + answer)
-        chooseQuestion()
+#     if checkAnswer(msg):
+#         sendMsg(user + " guessed the correct answer: " + answer)
+#         chooseQuestion()
 
-    if game_over:
-        print("game over")
-        server.close()
-        sys.exit(0)
+#     if game_over:
+#         print("game over")
+#         server.close()
+#         sys.exit(0)
 
+# def main():
+#     print "Hello World"
+
+# if __name__ == "__main__":
+#     main()

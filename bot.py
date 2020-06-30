@@ -3,7 +3,7 @@ import socket
 import csv
 import random
 import sys
-from app import server
+import app as a
 
 questions = []
 q_num = 0
@@ -13,7 +13,7 @@ game_over = False
 
 def joinChat():
     while True:
-        line = server.recv(2048).decode("utf-8").split("/n").pop()
+        line = a.server.recv(2048).decode("utf-8").split("/n").pop()
         if "End of /NAMES list" in line:
             sendMsg("triviabot has joined the chat")
             return
@@ -47,7 +47,7 @@ def chooseQuestion():
 
 # pongs server back to not timeout
 def pong(line):
-    server.send(bytes(line.replace("PING", "PONG") + "\r\n", "utf-8"))
+    a.server.send(bytes(line.replace("PING", "PONG") + "\r\n", "utf-8"))
     print("ponged")
 
 # extracts username
@@ -68,7 +68,7 @@ def checkAnswer(msg):
     return True
 
 def sendMsg(msg):
-    server.send(bytes("PRIVMSG #" + CHANNEL + " :" + msg + "\r\n", "utf-8"))
+    a.server.send(bytes("PRIVMSG #" + CHANNEL + " :" + msg + "\r\n", "utf-8"))
     print("Sent:", msg)
 
 
@@ -76,18 +76,18 @@ def sendMsg(msg):
 
 # loadQuestions()
 
-# server = socket.socket()
-# server.connect((HOST, PORT))
-# server.send(bytes("PASS " + PASS + "\r\n", "utf-8"))
-# server.send(bytes("NICK " + NICK + "\r\n", "utf-8"))
-# server.send(bytes("JOIN #" + CHANNEL + "\r\n", "utf-8"))
+# a.server = socket.socket()
+# a.server.connect((HOST, PORT))
+# a.server.send(bytes("PASS " + PASS + "\r\n", "utf-8"))
+# a.server.send(bytes("NICK " + NICK + "\r\n", "utf-8"))
+# a.server.send(bytes("JOIN #" + CHANNEL + "\r\n", "utf-8"))
 # joinChat()
 
 # chooseQuestion()
 
 # while True:
-#     # print(server.recv(2048).decode("utf-8"))
-#     line = server.recv(2048).decode("utf-8").split("\n")
+#     # print(a.server.recv(2048).decode("utf-8"))
+#     line = a.server.recv(2048).decode("utf-8").split("\n")
 #     if len(line) == 2:
 #         line = line[0]
 #         # print(line)
@@ -105,7 +105,7 @@ def sendMsg(msg):
 
 #     if game_over:
 #         print("game over")
-#         server.close()
+#         a.server.close()
 #         sys.exit(0)
 
 # def main():

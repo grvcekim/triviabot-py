@@ -4,7 +4,7 @@ import csv
 import random
 import sys
 
-# list of (question, answer) tuples
+# list of all (question, answer) tuples
 questions = []
 # current question #, starting at 1
 q_num = 0
@@ -50,7 +50,7 @@ def loadQuestions():
 
 # choose next question from global questions list and update global question, answer, q_num
 # vars accordingly. releases question in chat
-def chooseQuestion():
+def chooseQuestion(server):
     global questions, q_num, question, answer, game_over
     # if all questions have been released, tells chat game is over and updates game_over flag
     if q_num == len(questions):
@@ -91,17 +91,13 @@ def sendMsg(server, msg):
 
 
 def run(server):
-    loadQuestions()
-    server = startSocket()
-    joinChat(server)
-    chooseQuestion()
     while True:
         # parse through data received from server
         line = server.recv(2048).decode("utf-8").split("\n")
         if len(line) == 2:
             # line is individual chat messages or pings from server
             line = line[0]
-            print(line)
+            # print(line)
             # if server pings, pong back and receive next line
             if "PING" in line:
                 pong(server, line)
@@ -114,7 +110,7 @@ def run(server):
         # if message contains the answer, tell chat and choose new question
         if checkAnswer(msg):
             sendMsg(server, user + " guessed the correct answer: " + answer)
-            chooseQuestion()
+            chooseQuestion(server)
         # if all questions have been asnwered, quit bot
         if game_over:
             print("game over")
@@ -123,4 +119,8 @@ def run(server):
 
 
 if __name__ == "__main__":
-    run()
+    loadQuestions()
+    server = startSocket()
+    joinChat(server)
+    chooseQuestion(server)
+    run(server)

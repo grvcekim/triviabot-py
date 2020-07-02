@@ -46,7 +46,6 @@ def loadQuestions():
         # randomize order of questions
         random.shuffle(questions)
         print("Total number of questions: %d" % len(questions)) 
-        # print(questions)
 
 # choose next question from global questions list and update global question, answer, q_num
 # vars accordingly. releases question in chat
@@ -89,7 +88,7 @@ def sendMsg(server, msg):
     server.send(bytes("PRIVMSG #" + CHANNEL + " :" + msg + "\r\n", "utf-8"))
     print("Sent:", msg)
 
-
+# continuously receives messages from server until game is over
 def run(server):
     while True:
         # parse through data received from server
@@ -97,12 +96,11 @@ def run(server):
         if len(line) == 2:
             # line is individual chat messages or pings from server
             line = line[0]
-            # print(line)
             # if server pings, pong back and receive next line
             if "PING" in line:
                 pong(server, line)
                 continue
-            # if user sends a chat message, parse user and message
+            # otherwise, line is a chat message, parse user and message
             else:
                 user = getUser(line)
                 msg = getMsg(line)
